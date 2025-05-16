@@ -1,7 +1,7 @@
 nischayikkuka Palindrome(n) {
      original = n
      reverse = 0
-    ee  (n > 0) സത്യമാവണvare{
+    ee  (n > 0) sathyamaavanavare{
         digit = n % 10
         reverse = reverse * 10 + digit
         n = n / 10
