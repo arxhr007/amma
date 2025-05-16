@@ -1,0 +1,3 @@
+parayuka("hello world!")
+sweekarikkuka name
+parayuka("welcome, " + name)

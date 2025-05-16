@@ -1,0 +1,14 @@
+സ്വീകരിക്കുക a
+സ്വീകരിക്കുക b
+
+add = a + b
+sub = a - b
+mul = a * b
+div = a / b
+mod = a % b
+
+പറയുക("add: " + add)
+പറയുക("sub: " + sub)
+പറയുക("mul: " + mul)
+പറയുക("div: " + div)
+പറയുക("mod: " + mod)

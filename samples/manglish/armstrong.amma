@@ -1,0 +1,18 @@
+
+nischayikkuka Armstrong(n) {
+     original = n
+     x = 0
+    ee  (n > 0) സത്യമാവണvare{
+         digit = n % 10
+        x = (x + digit * digit * digit)
+        n = n / 10
+    }
+    ithu  (x == original) sathyamo{
+        parayuka("Armstrong Number")
+    } allenkil {
+        parayuka("Not Armstrong Number")
+    }
+}
+sweekarikkuka x
+
+Armstrong(x)

@@ -1,0 +1,16 @@
+nischayikkuka fib(n) {
+    ithu  (n == 0) sathyamo {
+        marupadi(0)
+    } allenkil {
+        ithu  (n == 1) sathyamo{
+            marupadi(1)
+        } allenkil {
+            marupadi(fib(n - 1) + fib(n - 2))
+        }
+    }
+}
+sweekarikkuka x
+
+0 muthal  x vare {
+    parayuka(fib(_))
+ }

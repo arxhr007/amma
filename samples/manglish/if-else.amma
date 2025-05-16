@@ -1,0 +1,7 @@
+sweekarikkuka count
+
+ithu (count % 2 == 0) sathyamo {
+    parayuka("its even")
+} allenkil {
+    parayuka("its odd")
+}

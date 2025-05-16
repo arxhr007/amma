@@ -1,0 +1,3 @@
+പറയുക("hello world!")
+സ്വീകരിക്കുക name
+പറയുക("welcome, " + name)

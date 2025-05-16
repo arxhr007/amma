@@ -1,0 +1,16 @@
+nischayikkuka Palindrome(n) {
+     original = n
+     reverse = 0
+    ee  (n > 0) സത്യമാവണvare{
+        digit = n % 10
+        reverse = reverse * 10 + digit
+        n = n / 10
+    }
+    ithu  (reverse == original) sathyamo{
+        parayuka("Palindrome Number")
+    } allenkil {
+        parayuka("Not Palindrome Number")
+    }
+}
+sweekarikkuka x
+Palindrome(x)

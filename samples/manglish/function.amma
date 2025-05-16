@@ -1,0 +1,6 @@
+nischayikkuka add(a, b) {
+    sum = a + b
+    marupadi sum
+}
+
+parayuka add(5, 3)

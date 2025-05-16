@@ -1,0 +1,9 @@
+// write
+എഴുതുക("Aaron Thomas", "out.txt")
+
+// append
+കൂട്ടിച്ചേർക്കുക(" build this", "out.txt")
+
+// read
+x=വായിക്കുക("out.txt")
+പറയുക x

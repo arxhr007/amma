@@ -1,0 +1,9 @@
+// write
+ezhuthuka("Aaron Thomas", "out.txt")
+
+// append
+kootticherkuka(" build this", "out.txt")
+
+// read
+x=vayikkuka("out.txt")
+parayuka x

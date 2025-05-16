@@ -1,0 +1,16 @@
+നിശ്ചയിക്കുക Palindrome(n) {
+     original = n
+     reverse = 0
+    ഈ  (n > 0) സത്യമാവണവരെ{
+        digit = n % 10
+        reverse = reverse * 10 + digit
+        n = n / 10
+    }
+    ഇത്  (reverse == original) സത്യമോ{
+        പറയുക("Palindrome Number")
+    } അല്ലെങ്കില് {
+        പറയുക("Not Palindrome Number")
+    }
+}
+സ്വീകരിക്കുക x
+Palindrome(x)

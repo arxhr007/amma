@@ -1,0 +1,18 @@
+
+നിശ്ചയിക്കുക Armstrong(n) {
+     original = n
+     x = 0
+    ഈ  (n > 0) സത്യമാവണവരെ{
+         digit = n % 10
+        x = (x + digit * digit * digit)
+        n = n / 10
+    }
+    ഇത്  (x == original) സത്യമോ{
+        പറയുക("Armstrong Number")
+    } അല്ലെങ്കില് {
+        പറയുക("Not Armstrong Number")
+    }
+}
+സ്വീകരിക്കുക x
+
+Armstrong(x)

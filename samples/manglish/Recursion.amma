@@ -1,0 +1,10 @@
+nischayikkuka factorial(n) {
+    ithu  (n == 0) sathyamo {
+        marupadi(1)
+    } allenkil {
+        marupadi(n * factorial(n - 1))
+    }
+}
+sweekarikkuka x
+result = factorial(x)
+parayuka("factorial result: " + result)

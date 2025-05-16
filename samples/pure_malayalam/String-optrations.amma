@@ -1,0 +1,15 @@
+word = "Aaron Thomas"
+
+// indexing
+പറയുക(word[2])  
+
+// substring
+പറയുക(word.മുറിക്കുക(1, 4)) 
+
+// concatenation
+പറയുക("hello from " + word) 
+
+// multiplication
+പറയുക(word*5) 
+
+

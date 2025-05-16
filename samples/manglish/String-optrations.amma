@@ -1,0 +1,15 @@
+word = "Aaron Thomas"
+
+// indexing
+parayuka(word[2])  
+
+// substring
+parayuka(word.murikkuka(1, 4)) 
+
+// concatenation
+parayuka("hello from " + word) 
+
+// multiplication
+parayuka(word*5) 
+
+

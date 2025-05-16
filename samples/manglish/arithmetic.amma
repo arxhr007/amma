@@ -1,0 +1,14 @@
+sweekarikkuka a
+sweekarikkuka b
+
+add = a + b
+sub = a - b
+mul = a * b
+div = a / b
+mod = a % b
+
+parayuka("add: " + add)
+parayuka("sub: " + sub)
+parayuka("mul: " + mul)
+parayuka("div: " + div)
+parayuka("mod: " + mod)

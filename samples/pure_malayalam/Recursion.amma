@@ -1,0 +1,10 @@
+നിശ്ചയിക്കുക factorial(n) {
+    ഇത്  (n == 0) സത്യമോ {
+        മറുപടി(1)
+    } അല്ലെങ്കില് {
+        മറുപടി(n * factorial(n - 1))
+    }
+}
+സ്വീകരിക്കുക x
+result = factorial(x)
+പറയുക("factorial result: " + result)
