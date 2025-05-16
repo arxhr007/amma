@@ -31,7 +31,7 @@ Amma is implemented in Rust, showcasing principles of lexical analysis, parsing,
 
 ### Using Pre-built Binaries
 
-Pre-built binaries for Windows and Linux are available in the [GitHub Releases](https://github.com/YourUsername/amma/releases) section. Simply:
+Pre-built binaries for Windows and Linux are available in the [GitHub Releases](https://github.com/arxhr007/amma/releases/tag/v1.0.0) section. Simply:
 
 1. Download the appropriate binary for your platform
 2. Make it executable (on Linux: `chmod +x amma`) // ignore this for windows
