@@ -18,6 +18,7 @@ pub fn transliterate_source(src: &str) -> String {
         ("ezhuthuka", "എഴുതുക"),
         ("kootticherkuka", "കൂട്ടിച്ചേർക്കുക"),
         ("murikkuka", "മുറിക്കുക"),
+        ("neelam":"നീളം"),
     ].iter().cloned().collect();
 
     let re = Regex::new(r#"(".*?"|'.*?')"#).unwrap();
