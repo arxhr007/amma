@@ -186,6 +186,11 @@ content = വായിക്കുക("filename.txt")
 full_name = first_name + " " + last_name
 ```
 
+**String Length:**
+```
+x= നീളം("hello")
+```
+
 **String Indexing:**
 ```
 first_char = name[0]
@@ -332,6 +337,9 @@ x=vayikkuka("out.txt")
 | എഴുതുക | ezhuthuka | Write file |
 | കൂട്ടിച്ചേർക്കുക | kootticherkuka | Append to file |
 | മുറിക്കുക | murikkuka | Substring operation |
+| നീളം | neelam | string length |
+
+
 
 ## Educational Purpose
 
