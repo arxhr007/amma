@@ -122,6 +122,20 @@ pub fn evaluate(expr: &Expr, env: &Environment, funcs: &Functions) -> Result<Val
             }
         },
 
+        Expr::Length(expr) => {
+            let val = evaluate(expr, env, funcs)?;
+            match val {
+                Value::Str(s) => {
+                    let len = s.chars().count() as i32;
+                    Ok(Value::Int(len))
+                },
+                Value::Int(i) => {
+                    let len = i.to_string().len() as i32;
+                    Ok(Value::Int(len))
+                },
+            }
+        },
+
         Expr::Binary(op, left, right) => {
             let left_val = evaluate(left, env, funcs)?;
             let right_val = evaluate(right, env, funcs)?;
@@ -377,7 +391,6 @@ pub fn run_stmt(stmt: &Stmt, env: &mut Environment, funcs: &mut Functions) -> Re
         },
 
         Stmt::FuncDef(name, params, body, ret_expr) => {
-            // Here's the fix: Store the return expression properly
             funcs.insert(name.clone(), (params.clone(), body.clone(), ret_expr.clone()));
             Ok(None)
         },
