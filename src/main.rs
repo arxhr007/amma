@@ -19,6 +19,8 @@ fn main() {
         let mut funcs = std::collections::HashMap::new();
         interpreter::run(&ast, &mut env, &mut funcs);
     } else {
-        println!("Usage: ./amma <script.amma>");
+        println!("Usage: ./amma <script.amma> (linux)");
+        println!("Usage: .\amma <script.amma> (windows)");
+        
     }
 }
