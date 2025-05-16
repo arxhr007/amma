@@ -35,7 +35,7 @@ Pre-built binaries for Windows and Linux are available in the [GitHub Releases](
 
 1. Download the appropriate binary for your platform
 2. Make it executable (on Linux: `chmod +x amma`) // ignore this for windows
-3. Create your Amma script with `.amma` file extension or try one from [samples]() i have provided
+3. Create your Amma script with `.amma` file extension or try one from [samples](https://github.com/arxhr007/amma/tree/main/samples) i have provided
 4. Run your script ( for linux in terminal ):
    ```bash
    ./amma your_script.amma
