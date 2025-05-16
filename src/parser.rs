@@ -9,6 +9,7 @@ pub enum Expr {
     Call(String, Vec<Expr>),
     Index(Box<Expr>, Box<Expr>),
     Substring(Box<Expr>, Box<Expr>, Box<Expr>),
+    Length(Box<Expr>), 
 }
 
 #[derive(Debug, Clone)]
@@ -179,6 +180,14 @@ impl Parser {
 
     fn parse_factor(&mut self) -> Result<Expr, String> {
         if let Some(tok) = self.peek() {
+            // Check for the new length function
+            if tok == "നീളം" {
+                self.consume(); // Consume "നീളം"
+                self.match_token("(")?;
+                let expr = self.parse_logical()?;
+                self.match_token(")")?;
+                return Ok(Expr::Length(Box::new(expr)));
+            }
 
             if (Regex::new(r"[a-zA-Z_]\w*").unwrap().is_match(tok) 
                 || tok.starts_with('"') 
