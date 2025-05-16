@@ -1,5 +1,5 @@
 i = 0
-ee (i < 5) സത്യമാവണvare{
+ee (i < 5) sathyamaavanavare{
     parayuka("i: " + i)
     i = i + 1
 }
