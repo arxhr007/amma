@@ -20,7 +20,7 @@ fn main() {
         interpreter::run(&ast, &mut env, &mut funcs);
     } else {
         println!("Usage: ./amma <script.amma> (linux)");
-        println!("Usage: .\amma <script.amma> (windows)");
+        println!("Usage: .\\amma <script.amma> (windows)");
         
     }
 }
