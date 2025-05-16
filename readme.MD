@@ -1,4 +1,4 @@
-<h1 align="center">AMMA programming language</h1>
+<h1 align="center">AMMA programming language & Interpreter</h1>
 <p align="center">
     <img src="https://i.ibb.co/gLDYVsJ8/amma.png" alt="amma logo"/>
 </p>
