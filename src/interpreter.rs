@@ -296,7 +296,7 @@ pub fn run_stmt(stmt: &Stmt, env: &mut Environment, funcs: &mut Functions) -> Re
                     Ok(None)
                 },
                 Err(_) => {
-                    println!("❌ File not found: {}", filename);
+                    println!("File not found: {}", filename);
                     env.insert(name.clone(), Value::Str(String::new()));
                     Ok(None)
                 },
