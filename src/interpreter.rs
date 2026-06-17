@@ -4,7 +4,7 @@ use std::io::{self, BufRead, Write};
 use crate::parser::{Expr, Stmt};
 
 pub type Environment = HashMap<String, Value>;
-pub type Functions = HashMap<String, (Vec<String>, Vec<Stmt>, Option<Expr>)>;
+pub type Functions = HashMap<String, (Vec<String>, Vec<Stmt>)>;
 
 #[derive(Debug, Clone)]
 pub enum Value {
@@ -18,6 +18,14 @@ impl std::fmt::Display for Value {
             Value::Int(i) => write!(f, "{}", i),
             Value::Str(s) => write!(f, "{}", s),
         }
+    }
+}
+
+/// Restore a variable to a previous value, or remove it if it had none.
+fn restore_var(env: &mut Environment, name: &str, prev: Option<Value>) {
+    match prev {
+        Some(v) => { env.insert(name.to_string(), v); }
+        None => { env.remove(name); }
     }
 }
 
@@ -35,33 +43,32 @@ pub fn evaluate(expr: &Expr, env: &Environment, funcs: &Functions) -> Result<Val
         Expr::Str(s) => Ok(Value::Str(s.clone())),
 
         Expr::Call(name, args) => {
-            if let Some((params, body, ret)) = funcs.get(name) {
-                let mut local_env = env.clone();
-                let mut evaluated_args = Vec::new();
-
-                for a in args {
-                    evaluated_args.push(evaluate(a, env, funcs)?);
-                }
-
-                for (p, a) in params.iter().zip(evaluated_args.iter()) {
-                    local_env.insert(p.clone(), a.clone());
-                }
-
-                let mut funcs_mut = funcs.clone();
-
-                for stmt in body {
-                    if let Some(result) = run_stmt(stmt, &mut local_env, &mut funcs_mut)? {
-                        return Ok(result);
+            match funcs.get(name) {
+                Some((params, body)) => {
+                    // Evaluate arguments in the caller's scope.
+                    let mut evaluated_args = Vec::new();
+                    for a in args {
+                        evaluated_args.push(evaluate(a, env, funcs)?);
                     }
-                }
 
-                if let Some(ret_expr) = ret {
-                    return evaluate(ret_expr, &local_env, funcs);
-                }
+                    // Fresh scope holding only parameters — no caller-local leak
+                    // (D1) and no full-env clone (P2). `funcs` is shared by
+                    // reference, so deep recursion no longer clones the table.
+                    let mut local_env: Environment = HashMap::new();
+                    for (p, a) in params.iter().zip(evaluated_args.iter()) {
+                        local_env.insert(p.clone(), a.clone());
+                    }
 
-                Ok(Value::Int(0))
-            } else {
-                Err(format!("Undefined function: {}", name))
+                    // Returns short-circuit via run_stmt's Option<Value> (B2).
+                    for stmt in body {
+                        if let Some(result) = run_stmt(stmt, &mut local_env, funcs)? {
+                            return Ok(result);
+                        }
+                    }
+
+                    Ok(Value::Int(0))
+                }
+                None => Err(format!("Undefined function: {}", name)),
             }
         },
 
@@ -71,9 +78,8 @@ pub fn evaluate(expr: &Expr, env: &Environment, funcs: &Functions) -> Result<Val
 
             let idx_int = match idx_val {
                 Value::Int(i) => i,
-                Value::Str(s) => s.parse::<i32>().unwrap_or_else(|_| {
-                    panic!("Index must be an integer")
-                }),
+                Value::Str(s) => s.parse::<i32>()
+                    .map_err(|_| format!("Index must be an integer, got \"{}\"", s))?,
             };
 
             match container_val {
@@ -98,16 +104,14 @@ pub fn evaluate(expr: &Expr, env: &Environment, funcs: &Functions) -> Result<Val
                 Value::Str(s) => {
                     let start_idx = match start_val {
                         Value::Int(i) => i as usize,
-                        Value::Str(s) => s.parse::<usize>().unwrap_or_else(|_| {
-                            panic!("Substring indices must be integers")
-                        }),
+                        Value::Str(s) => s.parse::<usize>()
+                            .map_err(|_| format!("Substring indices must be integers, got \"{}\"", s))?,
                     };
 
                     let end_idx = match end_val {
                         Value::Int(i) => i as usize,
-                        Value::Str(s) => s.parse::<usize>().unwrap_or_else(|_| {
-                            panic!("Substring indices must be integers")
-                        }),
+                        Value::Str(s) => s.parse::<usize>()
+                            .map_err(|_| format!("Substring indices must be integers, got \"{}\"", s))?,
                     };
 
                     let chars: Vec<char> = s.chars().collect();
@@ -250,7 +254,7 @@ pub fn evaluate(expr: &Expr, env: &Environment, funcs: &Functions) -> Result<Val
     }
 }
 
-pub fn run_stmt(stmt: &Stmt, env: &mut Environment, funcs: &mut Functions) -> Result<Option<Value>, String> {
+pub fn run_stmt(stmt: &Stmt, env: &mut Environment, funcs: &Functions) -> Result<Option<Value>, String> {
     match stmt {
         Stmt::Print(expr) => {
             let val = evaluate(expr, env, funcs)?;
@@ -347,16 +351,22 @@ pub fn run_stmt(stmt: &Stmt, env: &mut Environment, funcs: &mut Functions) -> Re
             let start = to_int(&evaluate(start_expr, env, funcs)?);
             let end = to_int(&evaluate(end_expr, env, funcs)?);
 
+            // Save any outer `_` so nested loops don't clobber each other (B1).
+            let prev = env.get("_").cloned();
+
             for i in start..=end {
                 env.insert("_".to_string(), Value::Int(i));
 
                 for stmt in body {
                     if let Some(result) = run_stmt(stmt, env, funcs)? {
+                        // Restore before propagating an early return.
+                        restore_var(env, "_", prev);
                         return Ok(Some(result));
                     }
                 }
             }
 
+            restore_var(env, "_", prev);
             Ok(None)
         },
 
@@ -390,8 +400,9 @@ pub fn run_stmt(stmt: &Stmt, env: &mut Environment, funcs: &mut Functions) -> Re
             Ok(None)
         },
 
-        Stmt::FuncDef(name, params, body, ret_expr) => {
-            funcs.insert(name.clone(), (params.clone(), body.clone(), ret_expr.clone()));
+        Stmt::FuncDef(..) => {
+            // Definitions are hoisted in `run` before execution (B5), so this
+            // is a no-op at statement-execution time.
             Ok(None)
         },
 
@@ -408,8 +419,16 @@ pub fn run_stmt(stmt: &Stmt, env: &mut Environment, funcs: &mut Functions) -> Re
 }
 
 pub fn run(statements: &[Stmt], env: &mut Environment, funcs: &mut Functions) -> Option<Value> {
+    // Hoist all top-level function definitions first so calls can reference
+    // functions defined later in the file, and mutual recursion works (B5).
     for stmt in statements {
-        match run_stmt(stmt, env, funcs) {
+        if let Stmt::FuncDef(name, params, body) = stmt {
+            funcs.insert(name.clone(), (params.clone(), body.clone()));
+        }
+    }
+
+    for stmt in statements {
+        match run_stmt(stmt, env, &*funcs) {
             Ok(Some(val)) => return Some(val),
             Ok(None) => {},
             Err(e) => {

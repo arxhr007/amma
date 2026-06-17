@@ -1,0 +1,9 @@
+// B3: for-loop start may be a full expression (not just one token).
+// Expected output:
+// 2
+// 3
+// 4
+x = 1
+x + 1 muthal 4 vare {
+    parayuka _
+}

@@ -1,4 +1,15 @@
-use regex::Regex;
+/// True if `tok` is a user identifier (ASCII letter/underscore start, then
+/// alphanumeric/underscore). Replaces the old per-call `Regex` compilation and
+/// also keeps Malayalam keyword tokens (matched separately by `==`) from ever
+/// being treated as variable names.
+fn is_ident(tok: &str) -> bool {
+    let mut chars = tok.chars();
+    match chars.next() {
+        Some(c) if c.is_ascii_alphabetic() || c == '_' => {}
+        _ => return false,
+    }
+    chars.all(|c| c.is_ascii_alphanumeric() || c == '_')
+}
 
 #[derive(Debug, Clone)]
 pub enum Expr {
@@ -23,7 +34,7 @@ pub enum Stmt {
     For(Expr, Expr, Vec<Stmt>),
     While(Expr, Vec<Stmt>),
     If(Expr, Vec<Stmt>, Vec<Stmt>),
-    FuncDef(String, Vec<String>, Vec<Stmt>, Option<Expr>),
+    FuncDef(String, Vec<String>, Vec<Stmt>),
     Expr(Expr),
     Return(Expr),
 }
@@ -47,9 +58,16 @@ impl Parser {
     }
 
     fn consume(&mut self) -> String {
-        let token = self.peek().unwrap().clone();
-        self.pos += 1;
-        token
+        // Return an empty token at EOF instead of panicking; callers and
+        // `match_token` then surface a clean "Expected ... got ''" error.
+        match self.peek() {
+            Some(tok) => {
+                let token = tok.clone();
+                self.pos += 1;
+                token
+            }
+            None => String::new(),
+        }
     }
 
     fn match_token(&mut self, expected: &str) -> Result<(), String> {
@@ -60,26 +78,12 @@ impl Parser {
         Ok(())
     }
 
-    fn next_is_loop(&self) -> bool {
-        if let Some(tok) = self.peek() {
-            if self.pos + 1 < self.tokens.len() {
-                let next_tok = &self.tokens[self.pos + 1];
-                return (tok.parse::<i32>().is_ok() 
-                    || Regex::new(r"[a-zA-Z_]\w*").unwrap().is_match(tok)
-                    || tok.starts_with('"')
-                    || tok.starts_with('\'')
-                    || tok == "(") && next_tok == "മുതൽ";
-            }
-        }
-        false
-    }
-
-    pub fn parse(&mut self) -> Vec<Stmt> {
+    pub fn parse(&mut self) -> Result<Vec<Stmt>, String> {
         let mut stmts = Vec::new();
         while self.peek().is_some() {
-            stmts.push(self.parse_statement().unwrap());
+            stmts.push(self.parse_statement()?);
         }
-        stmts
+        Ok(stmts)
     }
 
     fn parse_logical(&mut self) -> Result<Expr, String> {
@@ -180,6 +184,18 @@ impl Parser {
 
     fn parse_factor(&mut self) -> Result<Expr, String> {
         if let Some(tok) = self.peek() {
+            // Unary minus: `-x` desugars to `0 - x` so negative literals and
+            // negated expressions parse (B4). Binds tighter than * and /.
+            if tok == "-" {
+                self.consume();
+                let operand = self.parse_factor()?;
+                return Ok(Expr::Binary(
+                    "-".to_string(),
+                    Box::new(Expr::Int(0)),
+                    Box::new(operand),
+                ));
+            }
+
             // Check for the new length function
             if tok == "നീളം" {
                 self.consume(); // Consume "നീളം"
@@ -189,16 +205,16 @@ impl Parser {
                 return Ok(Expr::Length(Box::new(expr)));
             }
 
-            if (Regex::new(r"[a-zA-Z_]\w*").unwrap().is_match(tok) 
-                || tok.starts_with('"') 
-                || tok.starts_with('\'')) 
-                && self.pos + 1 < self.tokens.len() 
+            if (is_ident(tok)
+                || tok.starts_with('"')
+                || tok.starts_with('\''))
+                && self.pos + 1 < self.tokens.len()
                 && self.tokens[self.pos + 1] == "[" {
 
                 let expr = self.parse_primary()?;
 
                 if self.peek() == Some(&"[".to_string()) {
-                    self.consume(); 
+                    self.consume();
                     let index = self.parse_logical()?;
                     self.match_token("]")?;
                     return Ok(Expr::Index(Box::new(expr), Box::new(index)));
@@ -207,9 +223,9 @@ impl Parser {
                 return Ok(expr);
             }
 
-            if Regex::new(r"[a-zA-Z_]\w*").unwrap().is_match(tok) 
-                && self.pos + 2 < self.tokens.len() 
-                && self.tokens[self.pos + 1] == "." 
+            if is_ident(tok)
+                && self.pos + 2 < self.tokens.len()
+                && self.tokens[self.pos + 1] == "."
                 && self.tokens[self.pos + 2] == "മുറിക്കുക" {
 
                 let var_name = self.consume();
@@ -235,12 +251,12 @@ impl Parser {
     fn parse_primary(&mut self) -> Result<Expr, String> {
         if let Some(tok) = self.peek() {
 
-            if Regex::new(r"[a-zA-Z_]\w*").unwrap().is_match(tok) 
-                && self.pos + 1 < self.tokens.len() 
+            if is_ident(tok)
+                && self.pos + 1 < self.tokens.len()
                 && self.tokens[self.pos + 1] == "(" {
 
                 let name = self.consume();
-                self.consume(); 
+                self.consume();
 
                 let mut args = Vec::new();
                 if self.peek() != Some(&")".to_string()) {
@@ -267,7 +283,7 @@ impl Parser {
                 return Ok(Expr::Int(val));
             }
 
-            if Regex::new(r"[a-zA-Z_]\w*").unwrap().is_match(tok) {
+            if is_ident(tok) {
                 return Ok(Expr::Var(self.consume()));
             }
 
@@ -302,20 +318,16 @@ impl Parser {
                 self.match_token(")")?;
                 self.match_token("{")?;
 
+                // Returns stay in `body`; the interpreter short-circuits on
+                // them via run_stmt's Option<Value> propagation (B2). No
+                // hoisting, so position and early-return semantics are correct.
                 let mut body = Vec::new();
-                let mut ret_expr = None;
-
                 while self.peek().is_some() && self.peek() != Some(&"}".to_string()) {
-                    let stmt = self.parse_statement()?;
-                    if let Stmt::Return(expr) = stmt {
-                        ret_expr = Some(expr);
-                    } else {
-                        body.push(stmt);
-                    }
+                    body.push(self.parse_statement()?);
                 }
 
                 self.match_token("}")?;
-                return Ok(Stmt::FuncDef(name, params, body, ret_expr));
+                return Ok(Stmt::FuncDef(name, params, body));
             }
 
             if tok == "മറുപടി" {
@@ -335,8 +347,8 @@ impl Parser {
                 return Ok(Stmt::Input(varname));
             }
 
-            if Regex::new(r"[a-zA-Z_]\w*").unwrap().is_match(tok) 
-                && self.pos + 1 < self.tokens.len() 
+            if is_ident(tok)
+                && self.pos + 1 < self.tokens.len()
                 && self.tokens[self.pos + 1] == "=" {
 
                 let varname = self.consume();
@@ -371,22 +383,6 @@ impl Parser {
                 let filename_expr = self.parse_logical()?;
                 self.match_token(")")?;
                 return Ok(Stmt::FileAppend(content_expr, filename_expr));
-            }
-
-            if self.next_is_loop() {
-                let start_expr = self.parse_logical()?;
-                self.match_token("മുതൽ")?;
-                let end_expr = self.parse_logical()?;
-                self.match_token("വരെ")?;
-                self.match_token("{")?;
-
-                let mut body = Vec::new();
-                while self.peek() != Some(&"}".to_string()) {
-                    body.push(self.parse_statement()?);
-                }
-
-                self.match_token("}")?;
-                return Ok(Stmt::For(start_expr, end_expr, body));
             }
 
             if tok == "ഈ" {
@@ -432,12 +428,32 @@ impl Parser {
                 return Ok(Stmt::If(cond, then_body, else_body));
             }
 
-            if Regex::new(r"[a-zA-Z_]\w*").unwrap().is_match(tok) 
-                && self.pos + 1 < self.tokens.len() 
-                && self.tokens[self.pos + 1] == "(" {
+            // For-loop or bare expression statement (B3, L4). Both begin with a
+            // general expression, so parse one and branch on whether `മുതൽ`
+            // follows. A failed parse backs out cleanly via the saved position.
+            let saved = self.pos;
+            match self.parse_logical() {
+                Ok(start_expr) => {
+                    if self.peek() == Some(&"മുതൽ".to_string()) {
+                        self.consume();
+                        let end_expr = self.parse_logical()?;
+                        self.match_token("വരെ")?;
+                        self.match_token("{")?;
 
-                let call_expr = self.parse_factor()?;
-                return Ok(Stmt::Expr(call_expr));
+                        let mut body = Vec::new();
+                        while self.peek().is_some() && self.peek() != Some(&"}".to_string()) {
+                            body.push(self.parse_statement()?);
+                        }
+
+                        self.match_token("}")?;
+                        return Ok(Stmt::For(start_expr, end_expr, body));
+                    }
+
+                    return Ok(Stmt::Expr(start_expr));
+                }
+                Err(_) => {
+                    self.pos = saved;
+                }
             }
         }
 

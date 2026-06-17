@@ -1,0 +1,5 @@
+// E1: non-integer index must report a clean runtime error, not panic.
+// Expected (on stderr):
+// Runtime error: Index must be an integer, got "z"
+word = "ab"
+parayuka word["z"]

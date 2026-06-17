@@ -1,0 +1,7 @@
+// B5: call a function defined later (and mutual reference) via hoisting.
+// Expected output:
+// 42
+parayuka g()
+nischayikkuka g() {
+    marupadi 42
+}

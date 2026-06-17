@@ -1,0 +1,7 @@
+// B4: negative literals / unary minus.
+// Expected output:
+// -5
+// -3
+x = -5
+parayuka x
+parayuka 2 - 5

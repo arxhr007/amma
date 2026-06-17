@@ -1,0 +1,8 @@
+// B2: top-level marupadi must short-circuit; line after must NOT print.
+// Expected output:
+// 1
+nischayikkuka f() {
+    marupadi 1
+    parayuka "should not print"
+}
+parayuka f()

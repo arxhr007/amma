@@ -1,0 +1,8 @@
+# Rust build output
+/target
+
+# Backup files from caveman-compress
+*.original.md
+
+# Files written by sample/file-handling scripts at runtime
+out.txt

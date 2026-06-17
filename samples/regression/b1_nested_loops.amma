@@ -1,0 +1,17 @@
+// B1: nested loops keep independent counters via save/restore of _.
+// Expected output (outer i, then inner j, then outer i again):
+// 0
+// 0
+// 1
+// 0
+// 1
+// 0
+// 1
+// 1
+0 muthal 1 vare {
+    parayuka _
+    0 muthal 1 vare {
+        parayuka _
+    }
+    parayuka _
+}
