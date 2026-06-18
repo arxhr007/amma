@@ -19,6 +19,44 @@ pub fn transliterate_source(src: &str) -> String {
         ("kootticherkuka", "കൂട്ടിച്ചേർക്കുക"),
         ("murikkuka", "മുറിക്കുക"),
         ("neelam", "നീളം"),
+
+        // --- data-type literals ---
+        ("sari", "ശരി"),
+        ("thettu", "തെറ്റ്"),
+        ("shoonyam", "ശൂന്യം"),
+
+        // --- control flow ---
+        ("nirthuka", "നിർത്തുക"),
+        ("thudaruka", "തുടരുക"),
+        ("alla", "അല്ല"),
+        ("oro", "ഓരോ"),
+        ("il", "ഇൽ"),
+
+        // --- stdlib: math ---
+        ("kevalam", "കേവലം"),
+        ("ghaatham", "ഘാതം"),
+        ("vargamoolam", "വർഗമൂലം"),
+        ("kuranjathu", "കുറഞ്ഞത്"),
+        ("koodiyathu", "കൂടിയത്"),
+        ("kramarahitham", "ക്രമരഹിതം"),
+
+        // --- stdlib: type conversion ---
+        ("samkhya", "സംഖ്യ"),
+        ("dashaamsham", "ദശാംശം"),
+        ("vaachakam", "വാചകം"),
+
+        // --- stdlib: string / list ops ---
+        ("valuthu", "വലുത്"),
+        ("cheruthu", "ചെറുത്"),
+        ("othukkuka", "ഒതുക്കുക"),
+        ("vibhajikkuka", "വിഭജിക്കുക"),
+        ("maattuka", "മാറ്റുക"),
+        ("undo", "ഉണ്ടോ"),
+        ("cherkkuka", "ചേർക്കുക"),
+        ("neekkuka", "നീക്കുക"),
+
+        // --- tooling ---
+        ("ulppeduthuka", "ഉൾപ്പെടുത്തുക"),
     ].iter().cloned().collect();
 
     let re = Regex::new(r#"(".*?"|'.*?')"#).unwrap();

@@ -10,6 +10,7 @@
 
 ## Table of Contents
 
+- [Documentation](#documentation)
 - [Overview](#overview)
 - [Installation](#installation)
 - [Language Features](#language-features)
@@ -19,9 +20,18 @@
   - [Functions](#functions)
   - [File I/O Operations](#file-io-operations)
   - [String Operations](#string-operations)
+  - [Built-in Functions](#built-in-functions)
+  - [Tooling](#tooling)
 - [Syntax Guide](#syntax-guide)
 - [Examples](#examples)
 - [Keywords Reference](#keywords-reference)
+
+## Documentation
+
+- [Getting Started](docs/getting-started.md) — install, first program, the REPL
+- [Language Reference](docs/language-reference.md) — complete reference: every
+  keyword, operator and builtin, in both Malayalam and manglish
+- [`samples/`](samples) — runnable examples in both scripts
 
 ## Overview
 
@@ -65,15 +75,31 @@ Amma language used **.amma** file extension , which means the program file shoul
 ### Variables and Data Types
 
 Amma supports the following data types:
-- **Numbers**: Integers are the primary number type
+- **Integers**: Whole numbers, e.g. `19`, `-7`
+- **Floats**: Decimal numbers, e.g. `3.14`. Any arithmetic mixing an integer and a float produces a float.
 - **Strings**: Text enclosed in single or double quotes
-- **Boolean**: Represented as 1 (true) and 0 (false)
+- **Booleans**: `ശരി` / `sari` (true) and `തെറ്റ്` / `thettu` (false). Comparisons and logical operators produce booleans. Booleans still interoperate with numbers (true = 1, false = 0).
+- **Null**: `ശൂന്യം` / `shoonyam` — the "nothing" value
+- **Lists**: Ordered collections written with square brackets, e.g. `[1, 2, 3]`
 
 Variable assignment is straightforward:
 
 ```
 name = "Aaron"
 age = 19
+pi = 3.14
+ok = sari            // boolean true
+nothing = shoonyam   // null
+nums = [10, 20, 30]  // list
+```
+
+**Lists** are indexed with `[]` (0-based), measured with `നീളം` / `neelam`, and
+support the list builtins described in [Built-in Functions](#built-in-functions):
+
+```
+nums = [10, 20, 30]
+parayuka nums[1]        // 20
+parayuka neelam(nums)   // 3
 ```
 
 ### Basic Operations
@@ -86,7 +112,17 @@ Amma provides standard arithmetic and logical operations:
 - Division: `/` (integer division)
 - Modulo: `%`
 - Comparison: `==`, `!=`, `<`, `>`, `<=`, `>=`
-- Logical: `&&` (AND), `||` (OR)
+- Logical: `&&` (AND), `||` (OR), `!` or `അല്ല` / `alla` (NOT)
+- Compound assignment: `+=`, `-=`, `*=`, `/=`, `%=` (e.g. `total += 5`)
+
+**Logical NOT** flips truthiness and returns a boolean:
+
+```
+flag = thettu
+ithu alla flag sathyamo {
+    parayuka "not false"
+}
+```
 
 ### Control Structures
 
@@ -106,6 +142,19 @@ ithu condition sathyamo {
     // code to execute if true
 } allenkil {
     // code to execute if false
+}
+```
+
+**Else-if chains** are formed by following `അല്ലെങ്കില്` / `allenkil` with another
+`ഇത്` / `ithu` instead of a block:
+
+```
+ithu n == 1 sathyamo {
+    parayuka "one"
+} allenkil ithu n == 2 sathyamo {
+    parayuka "two"
+} allenkil {
+    parayuka "other"
 }
 ```
 
@@ -138,6 +187,37 @@ Transliterated:
 ```
 ee condition sathyamaavanavare {
     // code to execute
+}
+```
+
+**For-each Loop** iterates over the items of a list (or the characters of a
+string) with `ഓരോ` / `oro` … `ഇൽ` / `il`:
+
+```
+ഓരോ item ഇൽ collection {
+    // code to execute, `item` holds each element
+}
+```
+
+Transliterated:
+```
+oro item il collection {
+    // code to execute, `item` holds each element
+}
+```
+
+**Break and Continue** control loop flow. `നിർത്തുക` / `nirthuka` exits the loop;
+`തുടരുക` / `thudaruka` skips to the next iteration:
+
+```
+0 muthal 10 vare {
+    ithu _ == 5 sathyamo {
+        nirthuka          // stop the loop
+    }
+    ithu _ % 2 == 0 sathyamo {
+        thudaruka         // skip even numbers
+    }
+    parayuka _
 }
 ```
 
@@ -205,6 +285,103 @@ part = name.മുറിക്കുക(0, 5)
 ```
 x=  "*" * 10
 ```
+
+**Escape sequences** are supported inside string literals: `\n` (newline),
+`\t` (tab), `\r`, `\\`, `\"`, `\'`.
+```
+parayuka "line1\nline2\ttabbed"
+```
+
+## Built-in Functions
+
+These functions are available everywhere and work with both Malayalam and
+manglish names. Builtins cannot be shadowed by user-defined functions.
+
+### Math
+
+| Malayalam | Transliteration | Description |
+|-----------|-----------------|-------------|
+| കേവലം | `kevalam(x)` | Absolute value |
+| ഘാതം | `ghaatham(base, exp)` | Power (`base` raised to `exp`) |
+| വർഗമൂലം | `vargamoolam(x)` | Square root (returns a float) |
+| കുറഞ്ഞത് | `kuranjathu(a, b, …)` | Minimum of the arguments (or of a single list) |
+| കൂടിയത് | `koodiyathu(a, b, …)` | Maximum of the arguments (or of a single list) |
+| ക്രമരഹിതം | `kramarahitham(n)` | Random integer in `0 .. n` |
+
+### Type conversion
+
+| Malayalam | Transliteration | Description |
+|-----------|-----------------|-------------|
+| സംഖ്യ | `samkhya(x)` | Convert to integer |
+| ദശാംശം | `dashaamsham(x)` | Convert to float |
+| വാചകം | `vaachakam(x)` | Convert to string |
+
+### String / list operations
+
+| Malayalam | Transliteration | Description |
+|-----------|-----------------|-------------|
+| വലുത് | `valuthu(s)` | Uppercase a string |
+| ചെറുത് | `cheruthu(s)` | Lowercase a string |
+| ഒതുക്കുക | `othukkuka(s)` | Trim surrounding whitespace |
+| വിഭജിക്കുക | `vibhajikkuka(s, sep)` | Split a string into a list by `sep` |
+| മാറ്റുക | `maattuka(s, old, new)` | Replace occurrences of `old` with `new` |
+| ഉണ്ടോ | `undo(haystack, needle)` | Whether a string/list contains `needle` (returns boolean) |
+| ചേർക്കുക | `cherkkuka(list, x)` | Return a new list with `x` appended |
+| നീക്കുക | `neekkuka(list, i)` | Return a new list with index `i` removed |
+
+> List operations return a **new** list rather than mutating in place, so reassign
+> the result: `nums = cherkkuka(nums, 4)`.
+
+```
+parayuka kevalam(-7)              // 7
+parayuka ghaatham(2, 10)         // 1024
+parayuka vargamoolam(144)        // 12
+parayuka valuthu("hello")        // HELLO
+parayuka vibhajikkuka("a,b,c", ",")  // [a, b, c]
+
+nums = [1, 2, 3]
+nums = cherkkuka(nums, 4)        // [1, 2, 3, 4]
+```
+
+## Tooling
+
+### Command-line options
+
+```
+amma <script.amma>      Run a program
+amma                    Start the interactive REPL
+amma --tokens <file>    Print the token stream, then run
+amma --ast <file>       Print the parsed AST, then run
+amma --version          Show the version
+amma --help             Show usage
+```
+
+### REPL
+
+Running `amma` with no script starts an interactive prompt. Variables and
+function definitions persist across lines, and bare expressions echo their value:
+
+```
+amma> x = 21
+amma> x * 2
+42
+```
+
+### Importing other files
+
+`ഉൾപ്പെടുത്തുക` / `ulppeduthuka` splices another `.amma` file in before running.
+Paths are resolved relative to where you run `amma`. Include cycles are detected
+and ignored.
+
+```
+ulppeduthuka("samples/manglish/lib_math.amma")
+parayuka irattikuka(21)   // uses a function defined in the imported file
+```
+
+### Error messages
+
+Parse errors include the source line number, e.g.
+`Parse error: Expected '}', got '' (near line 12)`.
 
 ## Syntax Guide
 
@@ -337,7 +514,33 @@ x=vayikkuka("out.txt")
 | എഴുതുക | ezhuthuka | Write file |
 | കൂട്ടിച്ചേർക്കുക | kootticherkuka | Append to file |
 | മുറിക്കുക | murikkuka | Substring operation |
-| നീളം | neelam | string length |
+| നീളം | neelam | Length of a string or list |
+| ശരി | sari | Boolean true |
+| തെറ്റ് | thettu | Boolean false |
+| ശൂന്യം | shoonyam | Null / nothing |
+| അല്ല | alla | Logical NOT |
+| നിർത്തുക | nirthuka | Break out of a loop |
+| തുടരുക | thudaruka | Continue to next loop iteration |
+| ഓരോ | oro | For-each loop ("for each") |
+| ഇൽ | il | For-each "in" |
+| ഉൾപ്പെടുത്തുക | ulppeduthuka | Import another file |
+| കേവലം | kevalam | Absolute value |
+| ഘാതം | ghaatham | Power |
+| വർഗമൂലം | vargamoolam | Square root |
+| കുറഞ്ഞത് | kuranjathu | Minimum |
+| കൂടിയത് | koodiyathu | Maximum |
+| ക്രമരഹിതം | kramarahitham | Random number |
+| സംഖ്യ | samkhya | Convert to integer |
+| ദശാംശം | dashaamsham | Convert to float |
+| വാചകം | vaachakam | Convert to string |
+| വലുത് | valuthu | Uppercase |
+| ചെറുത് | cheruthu | Lowercase |
+| ഒതുക്കുക | othukkuka | Trim whitespace |
+| വിഭജിക്കുക | vibhajikkuka | Split string into list |
+| മാറ്റുക | maattuka | Replace in string |
+| ഉണ്ടോ | undo | Contains check |
+| ചേർക്കുക | cherkkuka | Append to list |
+| നീക്കുക | neekkuka | Remove from list |
 
 
 

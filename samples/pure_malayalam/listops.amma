@@ -1,0 +1,13 @@
+// for-each loop and list builtins
+
+fruits = ["apple", "mango", "banana"]
+ഓരോ f ഇൽ fruits {
+    പറയുക f
+}
+
+nums = [1, 2, 3]
+nums = ചേർക്കുക(nums, 4)
+പറയുക nums
+nums = നീക്കുക(nums, 0)
+പറയുക nums
+പറയുക ഉണ്ടോ(nums, 3)

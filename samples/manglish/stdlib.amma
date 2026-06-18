@@ -1,0 +1,17 @@
+// Standard-library builtins: math, type conversion, string ops
+
+parayuka kevalam(-7)
+parayuka ghaatham(2, 10)
+parayuka vargamoolam(144)
+parayuka kuranjathu(5, 2, 9)
+parayuka koodiyathu(5, 2, 9)
+
+parayuka samkhya("42") + 8
+parayuka dashaamsham("3.5") * 2
+parayuka vaachakam(100) + "!"
+
+parayuka valuthu("hello")
+parayuka cheruthu("HELLO")
+parayuka othukkuka("  hi  ") + "|"
+parayuka vibhajikkuka("a,b,c", ",")
+parayuka maattuka("hello", "l", "L")

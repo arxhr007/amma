@@ -1,0 +1,17 @@
+// Floats, booleans, null and lists
+
+pi = 3.14
+പറയുക pi * 2
+
+flag = ശരി
+ഇത് flag സത്യമോ {
+    പറയുക "flag is true"
+}
+
+nothing = ശൂന്യം
+പറയുക nothing
+
+nums = [10, 20, 30]
+പറയുക nums
+പറയുക nums[1]
+പറയുക നീളം(nums)

@@ -1,0 +1,4 @@
+// Import another file. Path is relative to where you run amma from.
+ഉൾപ്പെടുത്തുക("samples/pure_malayalam/lib_math.amma")
+
+പറയുക irattikuka(21)

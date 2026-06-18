@@ -1,0 +1,5 @@
+// Helper module imported by import-demo.amma
+
+nischayikkuka irattikuka(n) {
+    marupadi n * 2
+}

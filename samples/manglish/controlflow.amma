@@ -1,0 +1,32 @@
+// break, continue, logical NOT, else-if and compound assignment
+
+total = 0
+0 muthal 10 vare {
+    ithu _ == 5 sathyamo {
+        nirthuka
+    }
+    total += _
+}
+parayuka total
+
+// print only odd numbers using continue
+0 muthal 5 vare {
+    ithu _ % 2 == 0 sathyamo {
+        thudaruka
+    }
+    parayuka _
+}
+
+flag = thettu
+ithu alla flag sathyamo {
+    parayuka "not false"
+}
+
+n = 2
+ithu n == 1 sathyamo {
+    parayuka "one"
+} allenkil ithu n == 2 sathyamo {
+    parayuka "two"
+} allenkil {
+    parayuka "other"
+}

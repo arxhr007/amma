@@ -1,0 +1,32 @@
+// break, continue, logical NOT, else-if and compound assignment
+
+total = 0
+0 മുതൽ 10 വരെ {
+    ഇത് _ == 5 സത്യമോ {
+        നിർത്തുക
+    }
+    total += _
+}
+പറയുക total
+
+// print only odd numbers using continue
+0 മുതൽ 5 വരെ {
+    ഇത് _ % 2 == 0 സത്യമോ {
+        തുടരുക
+    }
+    പറയുക _
+}
+
+flag = തെറ്റ്
+ഇത് അല്ല flag സത്യമോ {
+    പറയുക "not false"
+}
+
+n = 2
+ഇത് n == 1 സത്യമോ {
+    പറയുക "one"
+} അല്ലെങ്കില് ഇത് n == 2 സത്യമോ {
+    പറയുക "two"
+} അല്ലെങ്കില് {
+    പറയുക "other"
+}

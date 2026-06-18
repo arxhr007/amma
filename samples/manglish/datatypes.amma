@@ -1,0 +1,17 @@
+// Floats, booleans, null and lists
+
+pi = 3.14
+parayuka pi * 2
+
+flag = sari
+ithu flag sathyamo {
+    parayuka "flag is true"
+}
+
+nothing = shoonyam
+parayuka nothing
+
+nums = [10, 20, 30]
+parayuka nums
+parayuka nums[1]
+parayuka neelam(nums)

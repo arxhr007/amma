@@ -1,0 +1,4 @@
+// Import another file. Path is relative to where you run amma from.
+ulppeduthuka("samples/manglish/lib_math.amma")
+
+parayuka irattikuka(21)

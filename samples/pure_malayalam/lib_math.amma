@@ -1,0 +1,5 @@
+// Helper module imported by import-demo.amma
+
+നിശ്ചയിക്കുക irattikuka(n) {
+    മറുപടി n * 2
+}

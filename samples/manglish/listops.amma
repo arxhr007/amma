@@ -1,0 +1,13 @@
+// for-each loop and list builtins
+
+fruits = ["apple", "mango", "banana"]
+oro f il fruits {
+    parayuka f
+}
+
+nums = [1, 2, 3]
+nums = cherkkuka(nums, 4)
+parayuka nums
+nums = neekkuka(nums, 0)
+parayuka nums
+parayuka undo(nums, 3)
