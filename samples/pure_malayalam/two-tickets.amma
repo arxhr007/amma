@@ -1,0 +1,23 @@
+// A1, A2, B1 and B2 are four different tickets on two routes.
+// Draw twice with replacement. How often is the route the same?
+routes = ["A", "A", "B", "B"]
+outcomes = 0
+same_route = 0
+same_ticket = 0
+0 മുതൽ 3 വരെ {
+    first = _
+    0 മുതൽ 3 വരെ {
+        second = _
+        outcomes += 1
+        ഇത് routes[first] == routes[second] സത്യമോ {
+            same_route += 1
+        }
+        ഇത് first == second സത്യമോ {
+            same_ticket += 1
+        }
+    }
+}
+// Among 16 equally likely pairs, 8 match by route and 4 by ticket.
+പറയുക outcomes
+പറയുക same_route
+പറയുക same_ticket
